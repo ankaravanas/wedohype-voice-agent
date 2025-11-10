@@ -384,40 +384,50 @@ def analyze_and_generate_html_report(business_data: Dict[str, Any]) -> Dict[str,
         
         # Prepare analysis prompt for OpenAI
         analysis_prompt = f"""
-You are an expert AI automation consultant. Analyze this business and identify exactly 3 specific AI automation opportunities.
+        You are a landing page conversion consultant. Review the BUSINESS INFORMATION and the WEBSITE CONTENT ANALYSIS. Identify exactly 3 specific landing page conversion opportunities that are practical to implement within 7 days, aligned with the business model and audience, focused on messaging and structure (headline clarity, value proposition, CTAs, form friction, social proof, objection handling, trust), and aimed at measurable outcomes within 6–12 months (e.g., higher conversion rate, more qualified inquiries).
+All JSON values must be written in Greek (field names remain exactly as in the schema). Avoid discussing page speed, mobile optimization, SEO, tracking, tools, integrations, pricing, costs, or fees.
 
 BUSINESS INFORMATION:
-- Company: {company_name}
-- Industry: {business_info.get('industry', 'General')}
-- Services: {', '.join(business_info.get('services', []))}
-- Technologies: {', '.join(business_info.get('technologies', []))}
+
+Company: {company_name}
+
+Industry: {business_info.get('industry', 'General')}
+
+Services: {', '.join(business_info.get('services', []))}
+
+Technologies: {', '.join(business_info.get('technologies', []))}
 
 WEBSITE CONTENT ANALYSIS:
 {content[:2500]}
 
 ANALYSIS REQUIREMENTS:
-Identify exactly 3 AI automation opportunities that are:
-- Practical and implementable
-- Aligned with their business model
-- Focused on ROI within 6-12 months
-- Specific to their industry and operations
-- Do NOT mention any pricing, costs, or fees in your recommendations
+
+Deliver 3 landing page conversion opportunities strictly about copy and layout (headline/subheadline clarity, unique value proposition, CTA clarity/placement, form fields/friction, social proof placement, objection handling, trust signals, logical flow).
+
+For each opportunity: state what to change on the page and why it matters in plain business terms.
+
+“implementation”: list 3–5 simple steps (copy/layout only; no technical setup or tools).
+
+“impact”: describe concrete business benefits (e.g., fewer form drop-offs, more qualified inquiries, likely CR lift).
+
+Sort the three opportunities by “priority” (High, then Medium, then Low).
+
+If information is missing, note reasonable assumptions in “overall_assessment”.
 
 Return ONLY valid JSON in this exact format:
-{{
-    "opportunities": [
-        {{
-            "title": "Specific automation solution name",
-            "description": "Detailed description of what this automation does",
-            "impact": "Specific business benefits and time/cost savings",
-            "implementation": "Step-by-step implementation approach with tools",
-            "roi_estimate": "Specific ROI calculation and timeframe",
-            "priority": "High/Medium/Low"
-        }}
-    ],
-    "overall_assessment": "Business automation readiness assessment",
-    "recommended_next_steps": "Specific actionable next steps"
-}}
+{
+"opportunities": [
+{
+"title": "Specific landing page change",
+"description": "What exactly changes on the page and why it matters (Greek).",
+"impact": "Concrete business benefits in Greek (e.g., fewer drop-offs, more qualified inquiries).",
+"implementation": "3–5 simple Greek steps for copy/layout adjustments (no tools, no tech).",
+"priority": "High/Medium/Low"
+}
+],
+"overall_assessment": "Short Greek assessment of landing page readiness, gaps, and assumptions.",
+"recommended_next_steps": "Specific Greek next steps to execute the changes."
+}
 """
         
         # Call OpenAI API
@@ -436,7 +446,7 @@ Return ONLY valid JSON in this exact format:
                 'messages': [
                     {
                         'role': 'system',
-                        'content': 'You are an expert AI automation consultant. Provide detailed, practical automation recommendations in valid JSON format only.'
+                        'content': 'You are an expert conversion focused landing page consultant. Provide detailed, practical recommendations for a landing page that will convert visitors into customers in valid JSON format only.'
                     },
                     {
                         'role': 'user',
@@ -473,32 +483,32 @@ Return ONLY valid JSON in this exact format:
             analysis_data = {
                 "opportunities": [
                     {
-                        "title": "Process Automation Implementation",
-                        "description": "Automate repetitive manual processes to improve efficiency",
-                        "impact": "25-35% time savings on routine operations",
-                        "implementation": "Workflow automation tools and custom integrations",
-                        "roi_estimate": "3-6 months payback period",
-                        "priority": "High"
+                    "title": "Αναδιατύπωση Headline & Subheadline για σαφή πρόταση αξίας",
+                    "description": "Κάνε το πρώτο μήνυμα να λέει ξεκάθαρα τι προσφέρεις, για ποιον και ποιο αποτέλεσμα περιμένει ο επισκέπτης. Πρόσθεσε υποτίτλο που εξηγεί το πώς/με ποια μεθοδολογία.",
+                    "impact": "Άμεση αύξηση κλικ στο κύριο CTA και μείωση bounce από την πρώτη οθόνη.",
+                    "implementation": "Ορισμός target + αποτελέσματος στο headline • Προσθήκη υποτίτλου με 1–2 προτάσεις εξήγησης • Αφαίρεση γενικοτήτων/σlogan • Έλεγχος ότι το primary CTA είναι ορατό ακριβώς κάτω από το μήνυμα",
+                    "roi_estimate": "Ορατή βελτίωση του conversion rate σε 1–3 μήνες με βάση υψηλότερα CTR στο κύριο CTA",
+                    "priority": "High"
                     },
                     {
-                        "title": "AI-Powered Customer Service",
-                        "description": "Implement intelligent chatbots and automated support systems",
-                        "impact": "24/7 availability with 60% faster response times",
-                        "implementation": "AI chatbot platform with existing system integration",
-                        "roi_estimate": "Immediate cost savings on support staff",
-                        "priority": "Medium"
+                    "title": "Μοναδικό Primary CTA & σωστή τοποθέτηση/επαναληψιμότητα",
+                    "description": "Διατήρησε μία κύρια ενέργεια σε όλη τη σελίδα και τοποθέτησέ την πάνω από το fold και μετά από κάθε βασικό section για συνεχή καθοδήγηση.",
+                    "impact": "Λιγότερη σύγχυση, περισσότερα κλικ στο σωστό σημείο και καθαρό funnel προς τη φόρμα/κράτηση.",
+                    "implementation": "Καθόρισε ένα primary CTA (π.χ. «ΚΛΕΙΣΕ ΡΑΝΤΕΒΟΥ») • Μετέφερε το πρώτο CTA πάνω από το fold • Επανάλαβέ το μετά το proof και πριν το footer • Αφαίρεσε δευτερεύοντα CTAs που αποσπούν",
+                    "roi_estimate": "Αύξηση κλικ στο CTA σε 2–4 εβδομάδες λόγω μείωσης τριβής και διάσπασης προσοχής",
+                    "priority": "Medium"
                     },
                     {
-                        "title": "Automated Data Analytics",
-                        "description": "Real-time business intelligence and automated reporting",
-                        "impact": "Data-driven decision making and trend identification",
-                        "implementation": "Analytics platform with automated dashboards",
-                        "roi_estimate": "6-12 months strategic value",
-                        "priority": "Medium"
+                    "title": "Απλοποίηση Φόρμας & τοποθέτηση Social Proof δίπλα",
+                    "description": "Μείωσε τα πεδία της φόρμας στα απολύτως απαραίτητα και πρόσθεσε 1–2 στοχευμένες μαρτυρίες ακριβώς δίπλα/κάτω για ενίσχυση εμπιστοσύνης τη στιγμή της απόφασης.",
+                    "impact": "Μείωση εγκαταλείψεων στη φόρμα και αύξηση ολοκληρωμένων αιτήσεων/κρατήσεων.",
+                    "implementation": "Κράτησε 3–4 βασικά πεδία max • Πρόσθεσε mini-proof (όνομα/ρόλος/αποτέλεσμα) δίπλα στη φόρμα • Εξήγησε τι συμβαίνει μετά το submit με 1 πρόταση • Βάλε microcopy για προστασία δεδομένων",
+                    "roi_estimate": "Μείωση form drop-offs 15–30% σε 1–2 μήνες με απλούστερη διαδικασία και ενισχυμένη εμπιστοσύνη",
+                    "priority": "Medium"
                     }
-                ],
-                "overall_assessment": "Strong potential for AI automation implementation with multiple high-impact opportunities",
-                "recommended_next_steps": "Begin with process mapping and prioritize highest-ROI automation opportunities"
+                    ],
+                    "overall_assessment": "Υπάρχει σαφές περιθώριο βελτίωσης σε πρόταση αξίας πρώτης οθόνης, συνέπεια κύριου CTA και τριβή στη φόρμα. Με στοχευμένες παρεμβάσεις copy/διάταξης μπορεί να αυξηθεί ουσιαστικά το conversion χωρίς τεχνικές αλλαγές.",
+                    "recommended_next_steps": "Ευθυγράμμιση headline/subheadline με αποτέλεσμα-στόχο • Οριστικοποίηση ενός primary CTA και διάταξή του στα κομβικά σημεία • Μείωση πεδίων φόρμας και προσθήκη 2 στοχευμένων μαρτυριών δίπλα στη φόρμα • Γρήγορο A/B copy test στο headline και στο CTA κείμενο."
             }
         
         # Generate HTML report
@@ -559,7 +569,7 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
 <body>
     <div class="container">
         <div class="header">
-            <h1>AI Automation Opportunities Report</h1>
+            <h1>Website Opportunities Report</h1>
             <p>Comprehensive Analysis for {company_name}</p>
             <p>Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
         </div>
@@ -576,17 +586,17 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
             
             <div class="assessment">
                 <h2>Overall Assessment</h2>
-                <p>{analysis.get('overall_assessment', 'This business shows strong potential for AI automation implementation.')}</p>
+                <p>{analysis.get('overall_assessment', 'This business shows strong potential for CRO.')}</p>
             </div>
             
-            <h2>AI Automation Opportunities</h2>"""
+            <h2>Website Conversion Opportunities</h2>"""
     
     # Add each opportunity
     for i, opp in enumerate(opportunities, 1):
         priority_class = opp.get('priority', 'Medium').lower()
         html += f"""
             <div class="opportunity">
-                <h3>{i}. {opp.get('title', 'Automation Opportunity')}</h3>
+                <h3>{i}. {opp.get('title', 'Website Conversion Opportunity')}</h3>
                 <span class="priority {priority_class}">{opp.get('priority', 'Medium')} Priority</span>
                 
                 <div class="metric">
@@ -606,7 +616,7 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
     html += f"""
             <div class="next-steps">
                 <h3>Recommended Next Steps</h3>
-                <p>{analysis.get('recommended_next_steps', 'Contact our automation specialists to discuss implementation.')}</p>
+                <p>{analysis.get('recommended_next_steps', 'Contact our landing page conversion specialists to discuss implementation.')}</p>
             </div>
         </div>
         
