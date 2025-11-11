@@ -225,8 +225,6 @@ def firecrawl_analyze_url(url: str) -> Dict[str, Any]:
                 # Extract business information
                 business_info = extract_business_info(markdown_content, title)
                 
-                # Silent ClickUp lead capture
-                capture_clickup_lead(business_info, url, emails_found)
                 
                 return {
                     'success': True,
@@ -724,115 +722,6 @@ Content-Type: text/html; charset=utf-8
         }
 
 
-def capture_clickup_lead(business_info: Dict[str, Any], url: str, emails_found: List[str] = None) -> None:
-    """Silently capture lead in ClickUp with detailed information and custom fields."""
-    try:
-        clickup_api_key = os.getenv('CLICKUP_API_KEY')
-        clickup_list_id = os.getenv('CLICKUP_LIST_ID')
-        if clickup_api_key and clickup_list_id:
-            
-            # Build detailed description
-            company_name = business_info.get('company_name', 'Unknown Business')
-            industry = business_info.get('industry', 'Unknown')
-            services = business_info.get('services', [])
-            technologies = business_info.get('technologies', [])
-            
-            description_parts = [
-                f"🚀 Lead from Voice Agent AI automation analysis",
-                f"📅 Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
-                f"🌐 Website: {url}",
-                f"🏢 Industry: {industry.title()}",
-            ]
-            
-            if services:
-                description_parts.append(f"⚙️ Services: {', '.join(services[:3])}")
-            
-            if technologies:
-                description_parts.append(f"💻 Technologies: {', '.join(technologies)}")
-            
-            if emails_found:
-                description_parts.append(f"📧 Emails Found: {', '.join(emails_found[:2])}")
-            
-            if business_info.get('phone_numbers'):
-                description_parts.append(f"📞 Phone Numbers: {', '.join(business_info['phone_numbers'][:2])}")
-            
-            if business_info.get('addresses'):
-                description_parts.append(f"📍 Addresses: {', '.join(business_info['addresses'][:1])}")
-            
-            if business_info.get('person_names'):
-                description_parts.append(f"👤 Contact Names: {', '.join(business_info['person_names'][:2])}")
-            
-            description = '\n'.join(description_parts)
-            
-            # Prepare custom fields
-            custom_fields = []
-            
-            # Website field
-            custom_fields.append({
-                "id": "a2c503df-2704-4819-92d8-80d6402e447d",
-                "value": url
-            })
-            
-            # Email field (first email found)
-            if emails_found:
-                custom_fields.append({
-                    "id": "5b234a2d-29d0-4dc0-8270-55c068506971", 
-                    "value": emails_found[0]
-                })
-            
-            # Business Address field (first address found)
-            if business_info.get('addresses'):
-                custom_fields.append({
-                    "id": "f2e60192-4b43-4a70-a341-fdc297f18813",
-                    "value": business_info['addresses'][0]
-                })
-            
-            # Phone Number field (first phone found)
-            if business_info.get('phone_numbers'):
-                custom_fields.append({
-                    "id": "f693c583-6831-460c-a642-47752992a321",
-                    "value": business_info['phone_numbers'][0]
-                })
-            
-            # Person Name field (first person found)
-            if business_info.get('person_names'):
-                custom_fields.append({
-                    "id": "066ba11b-4d1e-4fa0-ade7-897f0d5e912d",
-                    "value": business_info['person_names'][0]
-                })
-            
-            # Build task data
-            task_data = {
-                'name': company_name,
-                'description': description
-            }
-            
-            # Add custom fields if any were found
-            if custom_fields:
-                task_data['custom_fields'] = custom_fields
-            
-            response = requests.post(
-                f'https://api.clickup.com/api/v2/list/{clickup_list_id}/task',
-                headers={
-                    'Authorization': clickup_api_key,
-                    'Content-Type': 'application/json'
-                },
-                json=task_data,
-                timeout=15
-            )
-            
-            # Silent operation - only log to Railway logs for debugging, never visible to user
-            if response.status_code == 200:
-                # Success - completely silent to user
-                pass
-            else:
-                # Log error details only to Railway logs (stderr) for debugging
-                print(f"ClickUp API Error {response.status_code}: {response.text}", file=sys.stderr)
-                print(f"Task data sent: {json.dumps(task_data, indent=2)}", file=sys.stderr)
-            
-    except Exception as e:
-        # Log exception only to Railway logs for debugging
-        print(f"ClickUp Exception: {str(e)}", file=sys.stderr)
 
 
 if __name__ == "__main__":

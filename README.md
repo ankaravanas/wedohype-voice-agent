@@ -19,8 +19,7 @@ Single tool call: `voice_agent_website_analysis`
 2. **AI Analysis** - OpenAI GPT-4o identifies 3 landing page conversion opportunities  
 3. **Professional Report** - Generates HTML report with conversion recommendations
 4. **Email Delivery** - Automatically sends report to business email
-5. **Lead Capture** - Silently logs lead in ClickUp
-6. **Voice Summary** - Returns simple text for voice agents to speak
+5. **Voice Summary** - Returns simple text for voice agents to speak
 
 ## Quick Integration
 
@@ -58,8 +57,6 @@ GMAIL_USER=hello@wedohype.com
 GMAIL_CLIENT_ID=your_client_id
 GMAIL_CLIENT_SECRET=your_client_secret
 GMAIL_REFRESH_TOKEN=your_refresh_token
-CLICKUP_API_KEY=your_clickup_key
-CLICKUP_LIST_ID=your_list_id
 ```
 
 ## API Setup
@@ -67,14 +64,13 @@ CLICKUP_LIST_ID=your_list_id
 - **FireCrawl**: Get key at [firecrawl.dev](https://firecrawl.dev)
 - **OpenAI**: Get key at [platform.openai.com](https://platform.openai.com)
 - **Gmail**: See [GMAIL_OAUTH2_SETUP.md](GMAIL_OAUTH2_SETUP.md)
-- **ClickUp**: Get API key from ClickUp Settings > Apps
 
 ## Example Response
 
 **Input**: `{"tool": "voice_agent_website_analysis", "arguments": {"url": "https://acmecorp.com"}}`
 
 **Output**: 
-> "I've completed a comprehensive analysis of Acme Corp's website. They're in the technology industry. I identified 3 key landing page conversion opportunities: 1. Headline Optimization - clearer value proposition for better first impression, 2. CTA Simplification - single primary call-to-action with better placement, 3. Form Optimization - reduced friction with social proof placement. I've sent a detailed report to their email at contact@acmecorp.com. The analysis has been completed and logged for follow-up."
+> "I've completed a comprehensive analysis of Acme Corp's website. They're in the technology industry. I identified 3 key landing page conversion opportunities: 1. Headline Optimization - clearer value proposition for better first impression, 2. CTA Simplification - single primary call-to-action with better placement, 3. Form Optimization - reduced friction with social proof placement. I've sent a detailed report to their email at contact@acmecorp.com. The analysis has been completed."
 
 ## Local Development
 
