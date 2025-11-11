@@ -1,10 +1,10 @@
-# Voice Agent MCP Server
+# WedoHype Voice Agent MCP Server
 
-A powerful MCP server optimized for voice agents, providing complete business automation analysis in a single tool call.
+A powerful MCP server optimized for voice agents, providing complete landing page conversion analysis in a single tool call.
 
 ## 🚀 Live Server
 
-**https://web-voice-automation.up.railway.app**
+**https://wedohype-voice-agent.up.railway.app**
 
 ## 🎯 Perfect for Voice Agents
 
@@ -16,8 +16,8 @@ Single tool call: `voice_agent_website_analysis`
 ## What It Does
 
 1. **Website Analysis** - FireCrawl v2 API extracts business information
-2. **AI Analysis** - OpenAI GPT-4o identifies 3 automation opportunities  
-3. **Professional Report** - Generates HTML report with recommendations
+2. **AI Analysis** - OpenAI GPT-4o identifies 3 landing page conversion opportunities  
+3. **Professional Report** - Generates HTML report with conversion recommendations
 4. **Email Delivery** - Automatically sends report to business email
 5. **Lead Capture** - Silently logs lead in ClickUp
 6. **Voice Summary** - Returns simple text for voice agents to speak
@@ -29,7 +29,7 @@ Single tool call: `voice_agent_website_analysis`
 {
   "functions": [{
     "name": "analyze_website",
-    "server": {"url": "https://web-voice-automation.up.railway.app"}
+    "server": {"url": "https://wedohype-voice-agent.up.railway.app"}
   }]
 }
 ```
@@ -39,7 +39,7 @@ Single tool call: `voice_agent_website_analysis`
 import requests
 
 response = requests.post(
-    "https://web-voice-automation.up.railway.app",
+    "https://wedohype-voice-agent.up.railway.app",
     json={
         "tool": "voice_agent_website_analysis",
         "arguments": {"url": "https://example.com"}
@@ -54,7 +54,7 @@ Set these in Railway dashboard:
 ```bash
 FIRECRAWL_API_KEY=your_key_here
 OPENAI_API_KEY=your_key_here
-GMAIL_USER=your_email@gmail.com
+GMAIL_USER=hello@wedohype.com
 GMAIL_CLIENT_ID=your_client_id
 GMAIL_CLIENT_SECRET=your_client_secret
 GMAIL_REFRESH_TOKEN=your_refresh_token
@@ -74,13 +74,13 @@ CLICKUP_LIST_ID=your_list_id
 **Input**: `{"tool": "voice_agent_website_analysis", "arguments": {"url": "https://acmecorp.com"}}`
 
 **Output**: 
-> "I've completed a comprehensive analysis of Acme Corp's website. They're in the technology industry. I identified 3 key automation opportunities: 1. Process Automation - 25% time savings on routine operations, 2. AI Customer Service - 60% faster response times, 3. Data Analytics - improved decision making. I've sent a detailed report to their email at contact@acmecorp.com. The analysis has been completed and logged for follow-up."
+> "I've completed a comprehensive analysis of Acme Corp's website. They're in the technology industry. I identified 3 key landing page conversion opportunities: 1. Headline Optimization - clearer value proposition for better first impression, 2. CTA Simplification - single primary call-to-action with better placement, 3. Form Optimization - reduced friction with social proof placement. I've sent a detailed report to their email at contact@acmecorp.com. The analysis has been completed and logged for follow-up."
 
 ## Local Development
 
 ```bash
-git clone https://github.com/ankaravanas/liberators-voice-agent.git
-cd liberators-voice-agent
+git clone https://github.com/ankaravanas/wedohype-voice-agent.git
+cd wedohype-voice-agent
 pip install -r requirements.txt
 cp .env.example .env  # Edit with your API keys
 python voice_agent_mcp_server.py
@@ -90,14 +90,14 @@ python voice_agent_mcp_server.py
 
 ```bash
 # Test live server
-curl -X POST https://web-voice-automation.up.railway.app \
+curl -X POST https://wedohype-voice-agent.up.railway.app \
   -H "Content-Type: application/json" \
-  -d '{"tool": "voice_agent_website_analysis", "arguments": {"url": "https://liberators.ai"}}'
+  -d '{"tool": "voice_agent_website_analysis", "arguments": {"url": "https://wedohype.com"}}'
 
 # Test locally
 curl -X POST http://localhost:8000 \
   -H "Content-Type: application/json" \
-  -d '{"tool": "voice_agent_website_analysis", "arguments": {"url": "https://liberators.ai"}}'
+  -d '{"tool": "voice_agent_website_analysis", "arguments": {"url": "https://wedohype.com"}}'
 ```
 
 ## Files
@@ -110,4 +110,4 @@ curl -X POST http://localhost:8000 \
 
 Railway auto-deploys from GitHub. Just push changes and they go live automatically.
 
-Built for voice agents. Simple, powerful, production-ready.
+Built for voice agents. Landing page conversion optimization made simple, powerful, and production-ready.

@@ -10,7 +10,7 @@ I've replaced the blocked SMTP with Gmail API using OAuth2 authentication - this
 
 ```bash
 # Gmail OAuth2 Configuration
-GMAIL_USER=hello@liberators.ai
+GMAIL_USER=hello@wedohype.com
 GMAIL_CLIENT_ID=your_gmail_oauth2_client_id_here
 GMAIL_CLIENT_SECRET=your_gmail_oauth2_client_secret_here
 GMAIL_REFRESH_TOKEN=your_gmail_refresh_token_here
@@ -57,7 +57,7 @@ curl -d "client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&code=AUTHORIZ
 ## 🔧 Railway Setup
 
 **Add these 4 variables in Railway:**
-1. `GMAIL_USER` = hello@liberators.ai
+1. `GMAIL_USER` = hello@wedohype.com
 2. `GMAIL_CLIENT_ID` = your_client_id
 3. `GMAIL_CLIENT_SECRET` = your_client_secret  
 4. `GMAIL_REFRESH_TOKEN` = your_refresh_token (from OAuth playground)

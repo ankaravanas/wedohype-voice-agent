@@ -676,7 +676,7 @@ def send_html_email(html_report: str, recipient_email: str, subject: str = "AI A
         
         # Create email message for Gmail API
         email_content = f"""To: {recipient_email}
-From: Andreas from WEDOHYPE <{gmail_user}>
+From: Andreas from WEDOHYPE <hello@wedohype.com>
 Subject: {subject}
 Content-Type: text/html; charset=utf-8
 
