@@ -217,9 +217,7 @@ def send_lead_to_webhook(business_info: Dict[str, Any], url: str, emails_found: 
             "services": business_info.get('services', []),
             "technologies": business_info.get('technologies', []),
             "emails_found": emails_found,
-            "phone_numbers": business_info.get('phone_numbers', []),
-            "addresses": business_info.get('addresses', []),
-            "person_names": business_info.get('person_names', [])
+            "primary_email": emails_found[0] if emails_found else None
         }
         
         # Add analysis data if available
@@ -305,8 +303,8 @@ def firecrawl_analyze_url(url: str) -> Dict[str, Any]:
                 email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}\b'
                 emails_found = list(set(re.findall(email_pattern, markdown_content)))
                 
-                # Extract business information
-                business_info = extract_business_info(markdown_content, title)
+                # Extract business information using AI
+                business_info = extract_business_info_with_ai(markdown_content, title)
                 
                 
                 return {
@@ -341,109 +339,105 @@ def firecrawl_analyze_url(url: str) -> Dict[str, Any]:
         return {'success': False, 'error': f'Unexpected error: {str(e)}', 'url': url}
 
 
-def extract_business_info(content: str, title: str) -> Dict[str, Any]:
-    """Extract business information from website content."""
-    content_lower = content.lower()
+def extract_business_info_with_ai(content: str, title: str) -> Dict[str, Any]:
+    """Extract business information from website content using AI analysis."""
     
+    # Fallback basic extraction for company name
+    company_name = title.split("-")[0].strip() if title else "Unknown Company"
+    
+    try:
+        openai_api_key = os.getenv('OPENAI_API_KEY')
+        if not openai_api_key:
+            # Fallback to basic extraction if no OpenAI key
+            return extract_business_info_basic(content, title)
+        
+        # AI prompt for business information extraction
+        extraction_prompt = f"""
+        Analyze the following website content and extract business information. Return ONLY valid JSON in this exact format:
+
+        {{
+            "company_name": "Extracted company name",
+            "industry": "Primary industry (e.g., technology, healthcare, consulting, finance, etc.)",
+            "services": ["service1", "service2", "service3"],
+            "technologies": ["tech1", "tech2", "tech3"]
+        }}
+
+        Website Title: {title}
+        Website Content: {content[:3000]}
+
+        Instructions:
+        - company_name: Extract the main company/business name
+        - industry: Identify the primary industry/sector (single word/phrase)
+        - services: List 3-5 main services/offerings mentioned
+        - technologies: List any technologies, tools, or platforms mentioned
+        - Return only the JSON, no other text
+        """
+        
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {openai_api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-4o-mini',  # Using mini for cost efficiency
+                'messages': [
+                    {
+                        'role': 'system',
+                        'content': 'You are a business analyst. Extract business information and return only valid JSON.'
+                    },
+                    {
+                        'role': 'user',
+                        'content': extraction_prompt
+                    }
+                ],
+                'temperature': 0.3,
+                'max_tokens': 500
+            },
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            ai_result = response.json()
+            ai_content = ai_result.get('choices', [{}])[0].get('message', {}).get('content', '')
+            
+            # Extract JSON from AI response
+            try:
+                json_start = ai_content.find('{')
+                json_end = ai_content.rfind('}') + 1
+                if json_start != -1 and json_end != -1:
+                    business_info = json.loads(ai_content[json_start:json_end])
+                    
+                    # Ensure we have a company name
+                    if not business_info.get('company_name') or business_info.get('company_name') == 'Unknown Company':
+                        business_info['company_name'] = company_name
+                    
+                    print(f"✅ AI extracted business info for {business_info.get('company_name')}", file=sys.stderr)
+                    return business_info
+                else:
+                    raise ValueError("No valid JSON found in AI response")
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"⚠️ AI extraction failed, using basic extraction: {e}", file=sys.stderr)
+                return extract_business_info_basic(content, title)
+        else:
+            print(f"⚠️ OpenAI API failed, using basic extraction", file=sys.stderr)
+            return extract_business_info_basic(content, title)
+            
+    except Exception as e:
+        print(f"⚠️ AI extraction error, using basic extraction: {e}", file=sys.stderr)
+        return extract_business_info_basic(content, title)
+
+
+def extract_business_info_basic(content: str, title: str) -> Dict[str, Any]:
+    """Basic fallback business information extraction."""
     # Extract company name from title
     company_name = title.split("-")[0].strip() if title else "Unknown Company"
     
-    # Detect industry
-    industries = {
-        "technology": ["software", "tech", "digital", "app", "platform", "saas", "development"],
-        "consulting": ["consulting", "advisory", "strategy", "expert", "professional services"],
-        "ecommerce": ["shop", "store", "buy", "sell", "product", "ecommerce", "retail"],
-        "healthcare": ["health", "medical", "doctor", "patient", "clinic", "hospital"],
-        "finance": ["finance", "banking", "investment", "financial", "accounting"],
-        "marketing": ["marketing", "advertising", "campaign", "brand", "promotion", "seo"],
-        "education": ["education", "learning", "course", "training", "school"],
-        "manufacturing": ["manufacturing", "production", "factory", "supply"]
-    }
-    
-    industry = "general"
-    for ind, keywords in industries.items():
-        if any(keyword in content_lower for keyword in keywords):
-            industry = ind
-            break
-    
-    # Extract services
-    services = []
-    service_patterns = [
-        r"we (provide|offer|deliver|specialize in) ([^.!?]+)",
-        r"our services include ([^.!?]+)",
-        r"services:([^.!?]+)"
-    ]
-    
-    for pattern in service_patterns:
-        matches = re.findall(pattern, content_lower)
-        for match in matches:
-            if isinstance(match, tuple):
-                services.extend([s.strip() for s in match[1].split(",")])
-            else:
-                services.extend([s.strip() for s in match.split(",")])
-    
-    # Extract technologies
-    tech_keywords = ["ai", "automation", "crm", "erp", "analytics", "cloud", "api", "database"]
-    technologies = [tech for tech in tech_keywords if tech in content_lower]
-    
-    # Extract phone numbers (more conservative patterns)
-    phone_patterns = [
-        r'\+?1?[-.\s]?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})',  # US format
-        r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b'  # Simple 10-digit format
-    ]
-    
-    phone_numbers = []
-    for pattern in phone_patterns:
-        matches = re.findall(pattern, content)
-        for match in matches:
-            if isinstance(match, tuple):
-                phone = ''.join(match)
-            else:
-                phone = match.strip()
-            # Only include if it looks like a real phone number (10-11 digits)
-            if phone and 10 <= len(re.sub(r'[^\d]', '', phone)) <= 11:
-                phone_numbers.append(phone)
-    
-    phone_numbers = list(set(phone_numbers))[:2]  # Top 2 unique phone numbers
-    
-    # Extract addresses (basic patterns)
-    address_patterns = [
-        r'\d+\s+[A-Za-z0-9\s,.-]+(?:Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Place|Pl)(?:\s+[A-Za-z0-9\s,.-]+)?',
-        r'\d+\s+[A-Za-z\s]+(?:Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Place|Pl)',
-    ]
-    
-    addresses = []
-    for pattern in address_patterns:
-        matches = re.findall(pattern, content, re.IGNORECASE)
-        addresses.extend([addr.strip() for addr in matches])
-    
-    addresses = list(set(addresses))[:2]  # Top 2 unique addresses
-    
-    # Extract person names (conservative patterns to avoid false positives)
-    name_patterns = [
-        r'(?:CEO|President|Founder|Director|Manager|Owner)[\s:]+([A-Z][a-z]+\s+[A-Z][a-z]+)',
-        r'([A-Z][a-z]+\s+[A-Z][a-z]+)[\s,]+(?:CEO|President|Founder|Director|Manager|Owner)',
-    ]
-    
-    person_names = []
-    for pattern in name_patterns:
-        matches = re.findall(pattern, content)
-        for name in matches:
-            name = name.strip()
-            # Filter out common false positives
-            if name and not any(word in name.lower() for word in ['dear', 'business', 'company', 'team', 'staff']):
-                person_names.append(name)
-    
-    person_names = list(set(person_names))[:2]  # Top 2 unique names
-    
     return {
         "company_name": company_name,
-        "industry": industry,
-        "services": services[:5],  # Top 5 services
-        "technologies": technologies,
-        "phone_numbers": phone_numbers,
-        "addresses": addresses,
-        "person_names": person_names
+        "industry": "general",
+        "services": [],
+        "technologies": []
     }
 
 
