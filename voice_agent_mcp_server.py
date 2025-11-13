@@ -94,7 +94,16 @@ def voice_agent_website_analysis(url: str) -> str:
         if not analysis_result.get('success'):
             return f"I analyzed the website for {company_name}, but couldn't generate detailed automation recommendations. The basic analysis shows they're in the {business_info.get('industry', 'business')} industry. You might want to try again or contact them directly."
         
-        # Step 4: Send email report (if email found)
+        # Step 4: Send lead data to webhook
+        print(f"🔗 Sending lead data to webhook...", file=sys.stderr)
+        webhook_result = send_lead_to_webhook(
+            business_info, 
+            url, 
+            emails_found, 
+            analysis_result.get('analysis', {})
+        )
+        
+        # Step 5: Send email report (if email found)
         html_report = analysis_result.get('html_report', '')
         
         # Cache report data for potential manual email sending
@@ -108,10 +117,10 @@ def voice_agent_website_analysis(url: str) -> str:
         if emails_found and html_report:
             primary_email = emails_found[0]
             print(f"📧 Sending report to {primary_email}", file=sys.stderr)
-            email_result = send_html_email(html_report, primary_email, f"AI Automation Opportunities Report - {company_name}")
+            email_result = send_html_email(html_report, primary_email, f"Landing Page Conversion Report - {company_name}")
             email_sent = email_result.get('success', False)
         
-        # Step 5: Generate voice-friendly response
+        # Step 6: Generate voice-friendly response
         opportunities = analysis_result.get('analysis', {}).get('opportunities', [])
         
         # Create speaking summary
@@ -172,17 +181,92 @@ def send_report_to_email(email: str) -> str:
         result = send_html_email(
             _last_html_report, 
             email, 
-            f"AI Automation Opportunities Report - {_last_company_name}"
+            f"Landing Page Conversion Report - {_last_company_name}"
+        )
+        
+        # Also send webhook data for manual email sends
+        webhook_result = send_lead_to_webhook(
+            {"company_name": _last_company_name}, 
+            "manual-email-send", 
+            [email], 
+            {"manual_email_send": True}
         )
         
         if result.get('success'):
-            return f"Successfully sent the automation report for {_last_company_name} to {email}."
+            return f"Successfully sent the conversion report for {_last_company_name} to {email}."
         else:
             return f"Failed to send the report to {email}. Please check the email address and try again."
             
     except Exception as e:
         print(f"❌ Send report error: {str(e)}", file=sys.stderr)
         return f"An error occurred while sending the report to {email}. Please try again."
+
+
+def send_lead_to_webhook(business_info: Dict[str, Any], url: str, emails_found: List[str], analysis_data: Dict[str, Any] = None) -> Dict[str, Any]:
+    """Send lead data to n8n webhook for processing."""
+    
+    webhook_url = "https://n9n.liberatorsai.com/webhook-test/voice-agent-leads"
+    
+    try:
+        # Prepare lead data payload
+        lead_data = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "source": "wedohype-voice-agent",
+            "website_url": url,
+            "company_name": business_info.get('company_name', 'Unknown Company'),
+            "industry": business_info.get('industry', 'Unknown'),
+            "services": business_info.get('services', []),
+            "technologies": business_info.get('technologies', []),
+            "emails_found": emails_found,
+            "phone_numbers": business_info.get('phone_numbers', []),
+            "addresses": business_info.get('addresses', []),
+            "person_names": business_info.get('person_names', [])
+        }
+        
+        # Add analysis data if available
+        if analysis_data:
+            lead_data.update({
+                "analysis_completed": True,
+                "opportunities_count": len(analysis_data.get('opportunities', [])),
+                "overall_assessment": analysis_data.get('overall_assessment', ''),
+                "recommended_next_steps": analysis_data.get('recommended_next_steps', '')
+            })
+        else:
+            lead_data["analysis_completed"] = False
+        
+        # Send webhook request
+        response = requests.post(
+            webhook_url,
+            json=lead_data,
+            headers={
+                'Content-Type': 'application/json',
+                'User-Agent': 'WedoHype-Voice-Agent/1.0'
+            },
+            timeout=10
+        )
+        
+        if response.status_code in [200, 201, 202]:
+            print(f"✅ Lead data sent to webhook successfully", file=sys.stderr)
+            return {
+                'success': True,
+                'timestamp': datetime.utcnow().isoformat(),
+                'webhook_status': response.status_code,
+                'company_name': business_info.get('company_name', 'Unknown')
+            }
+        else:
+            print(f"⚠️ Webhook responded with status {response.status_code}: {response.text[:200]}", file=sys.stderr)
+            return {
+                'success': False,
+                'error': f'Webhook returned status {response.status_code}',
+                'webhook_status': response.status_code
+            }
+            
+    except requests.exceptions.Timeout:
+        print(f"⏰ Webhook request timed out", file=sys.stderr)
+        return {'success': False, 'error': 'Webhook request timed out'}
+    except Exception as e:
+        print(f"❌ Webhook error: {str(e)}", file=sys.stderr)
+        return {'success': False, 'error': f'Webhook error: {str(e)}'}
 
 
 def firecrawl_analyze_url(url: str) -> Dict[str, Any]:
