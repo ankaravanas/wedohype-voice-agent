@@ -207,29 +207,13 @@ def send_lead_to_webhook(business_info: Dict[str, Any], url: str, emails_found: 
     webhook_url = "https://n9n.liberatorsai.com/webhook-test/voice-agent-leads"
     
     try:
-        # Prepare lead data payload
+        # Prepare simplified lead data payload - only the 4 requested fields
         lead_data = {
-            "timestamp": datetime.utcnow().isoformat(),
-            "source": "wedohype-voice-agent",
             "website_url": url,
             "company_name": business_info.get('company_name', 'Unknown Company'),
-            "industry": business_info.get('industry', 'Unknown'),
-            "services": business_info.get('services', []),
-            "technologies": business_info.get('technologies', []),
-            "emails_found": emails_found,
-            "primary_email": emails_found[0] if emails_found else None
+            "description": business_info.get('description', 'Business information not available'),
+            "email": emails_found[0] if emails_found else None
         }
-        
-        # Add analysis data if available
-        if analysis_data:
-            lead_data.update({
-                "analysis_completed": True,
-                "opportunities_count": len(analysis_data.get('opportunities', [])),
-                "overall_assessment": analysis_data.get('overall_assessment', ''),
-                "recommended_next_steps": analysis_data.get('recommended_next_steps', '')
-            })
-        else:
-            lead_data["analysis_completed"] = False
         
         # Send webhook request
         response = requests.post(
@@ -358,6 +342,7 @@ def extract_business_info_with_ai(content: str, title: str) -> Dict[str, Any]:
         {{
             "company_name": "Extracted company name",
             "industry": "Primary industry (e.g., technology, healthcare, consulting, finance, etc.)",
+            "description": "Brief 1-2 sentence description of what the company does",
             "services": ["service1", "service2", "service3"],
             "technologies": ["tech1", "tech2", "tech3"]
         }}
@@ -368,6 +353,7 @@ def extract_business_info_with_ai(content: str, title: str) -> Dict[str, Any]:
         Instructions:
         - company_name: Extract the main company/business name
         - industry: Identify the primary industry/sector (single word/phrase)
+        - description: Write a brief 1-2 sentence summary of what the company does
         - services: List 3-5 main services/offerings mentioned
         - technologies: List any technologies, tools, or platforms mentioned
         - Return only the JSON, no other text
@@ -436,6 +422,7 @@ def extract_business_info_basic(content: str, title: str) -> Dict[str, Any]:
     return {
         "company_name": company_name,
         "industry": "general",
+        "description": "Business information not available",
         "services": [],
         "technologies": []
     }
