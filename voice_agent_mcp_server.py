@@ -497,19 +497,19 @@ Sort the three opportunities by “priority” (High, then Medium, then Low).
 If information is missing, note reasonable assumptions in “overall_assessment”.
 
 Return ONLY valid JSON in this exact format:
-{
+{{
 "opportunities": [
-{
+{{
 "title": "Specific landing page change",
 "description": "What exactly changes on the page and why it matters (Greek).",
 "impact": "Concrete business benefits in Greek (e.g., fewer drop-offs, more qualified inquiries).",
 "implementation": "3–5 simple Greek steps for copy/layout adjustments (no tools, no tech).",
 "priority": "High/Medium/Low"
-}
+}}
 ],
 "overall_assessment": "Short Greek assessment of landing page readiness, gaps, and assumptions.",
 "recommended_next_steps": "Specific Greek next steps to execute the changes."
-}
+}}
 """
         
         # Call OpenAI API
