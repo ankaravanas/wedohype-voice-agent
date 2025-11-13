@@ -52,7 +52,7 @@ curl -d "client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&code=AUTHORIZ
 - ✅ **Email sending works on Railway** 
 - ✅ **No SMTP blocking issues**
 - ✅ **Professional HTML reports** delivered
-- ✅ **Complete automation workflow** functional
+- ✅ **Complete landing page conversion analysis workflow** functional
 
 ## 🔧 Railway Setup
 

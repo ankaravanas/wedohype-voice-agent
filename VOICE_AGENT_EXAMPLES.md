@@ -1,6 +1,6 @@
 # 🎙️ Voice Agent Integration Examples
 
-**Live Server**: https://web-voice-automation.up.railway.app
+**Live Server**: https://wedohype-voice-agent.up.railway.app
 
 ## Complete Integration Examples
 
@@ -14,13 +14,13 @@
     "messages": [
       {
         "role": "system",
-        "content": "You are a business automation consultant. When users ask you to analyze a website, use the analyze_website function to provide comprehensive automation recommendations."
+        "content": "You are a business conversion optimization consultant. When users ask you to analyze a website, use the analyze_website function to provide comprehensive conversion optimization recommendations."
       }
     ],
     "functions": [
       {
         "name": "analyze_website",
-        "description": "Analyze a business website for AI automation opportunities and send detailed report",
+        "description": "Analyze a business website for AI conversion optimization opportunities and send detailed report",
         "parameters": {
           "type": "object",
           "properties": {
@@ -32,7 +32,7 @@
           "required": ["url"]
         },
         "server": {
-          "url": "https://web-voice-automation.up.railway.app",
+          "url": "https://wedohype-voice-agent.up.railway.app",
           "method": "POST"
         }
       }
@@ -42,7 +42,7 @@
     "provider": "11labs",
     "voiceId": "21m00Tcm4TlvDq8ikWAM"
   },
-  "firstMessage": "Hi! I'm an AI automation consultant. I can analyze any business website and identify specific automation opportunities. Just give me a website URL and I'll provide a comprehensive analysis!"
+  "firstMessage": "Hi! I'm an AI conversion optimization consultant. I can analyze any business website and identify specific conversion optimization opportunities. Just give me a website URL and I'll provide a comprehensive analysis!"
 }
 ```
 
@@ -52,13 +52,13 @@
 import requests
 import json
 
-class BusinessAutomationAgent:
+class LandingPageConversionAgent:
     def __init__(self):
-        self.mcp_server = "https://web-voice-automation.up.railway.app"
+        self.mcp_server = "https://wedohype-voice-agent.up.railway.app"
     
-    def analyze_website_for_automation(self, url: str) -> str:
+    def analyze_website_for_conversion optimization(self, url: str) -> str:
         """
-        Analyze a business website for automation opportunities
+        Analyze a business website for conversion optimization opportunities
         """
         try:
             response = requests.post(
@@ -81,7 +81,7 @@ class BusinessAutomationAgent:
 
 # Bland AI webhook handler
 def handle_bland_webhook(request):
-    agent = BusinessAutomationAgent()
+    agent = LandingPageConversionAgent()
     
     # Extract URL from user's speech
     user_message = request.json.get('transcript', '')
@@ -96,7 +96,7 @@ def handle_bland_webhook(request):
         if not url.startswith('http'):
             url = f"https://{url}"
         
-        result = agent.analyze_website_for_automation(url)
+        result = agent.analyze_website_for_conversion optimization(url)
         return {"response": result}
     else:
         return {"response": "Please provide a website URL for me to analyze. For example, say 'analyze liberators.ai' or 'check out example.com'"}
@@ -110,7 +110,7 @@ async function analyzeBusinessWebsite(args) {
     const { url } = args;
     
     try {
-        const response = await fetch('https://web-voice-automation.up.railway.app', {
+        const response = await fetch('https://wedohype-voice-agent.up.railway.app', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ const retellConfig = {
     functions: [
         {
             name: "analyze_website",
-            description: "Analyze a business website for automation opportunities",
+            description: "Analyze a business website for conversion optimization opportunities",
             parameters: {
                 type: "object",
                 properties: {
@@ -159,7 +159,7 @@ const retellConfig = {
             handler: analyzeBusinessWebsite
         }
     ],
-    begin_message: "Hello! I'm your AI automation consultant. I can analyze any business website and identify specific opportunities for AI automation. Just give me a website URL to get started!"
+    begin_message: "Hello! I'm your AI conversion optimization consultant. I can analyze any business website and identify specific opportunities for AI conversion optimization. Just give me a website URL to get started!"
 };
 ```
 
@@ -174,10 +174,10 @@ from typing import Dict, Any
 
 class VoiceAutomationAgent:
     def __init__(self):
-        self.mcp_server = "https://web-voice-automation.up.railway.app"
+        self.mcp_server = "https://wedohype-voice-agent.up.railway.app"
         self.system_prompt = """
-        You are an expert AI automation consultant. When users provide website URLs,
-        use the website analysis tool to provide comprehensive automation recommendations.
+        You are an expert AI conversion optimization consultant. When users provide website URLs,
+        use the website analysis tool to provide comprehensive conversion optimization recommendations.
         Speak in a friendly, professional tone suitable for business conversations.
         """
     
@@ -229,7 +229,7 @@ class VoiceAutomationAgent:
     
     def start_server(self, host='localhost', port=8765):
         """Start the voice agent WebSocket server"""
-        print(f"Starting voice automation agent on {host}:{port}")
+        print(f"Starting voice conversion optimization agent on {host}:{port}")
         start_server = websockets.serve(self.handle_voice_input, host, port)
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
@@ -243,15 +243,15 @@ if __name__ == "__main__":
 
 ### Example 1: Business Website Analysis
 
-**User**: "Can you analyze the website liberators.ai for automation opportunities?"
+**User**: "Can you analyze the website liberators.ai for conversion optimization opportunities?"
 
-**Voice Agent Response**: "I've completed a comprehensive analysis of Liberators AI's website. They're in the technology industry. I identified 3 key automation opportunities: 1. AI-Powered Lead Qualification - automated prospect scoring and routing with 40% faster response times, 2. Intelligent Content Personalization - dynamic website content based on visitor behavior with 25% higher conversion rates, 3. Automated Client Onboarding - streamlined project setup and documentation with 60% time savings. I've sent a detailed report to their email at contact@liberators.ai. The analysis has been completed and logged for follow-up."
+**Voice Agent Response**: "I've completed a comprehensive analysis of Liberators AI's website. They're in the technology industry. I identified 3 key conversion optimization opportunities: 1. AI-Powered Lead Qualification - automated prospect scoring and routing with 40% faster response times, 2. Intelligent Content Personalization - dynamic website content based on visitor behavior with 25% higher conversion rates, 3. Automated Client Onboarding - streamlined project setup and documentation with 60% time savings. I've sent a detailed report to their email at contact@liberators.ai. The analysis has been completed and logged for follow-up."
 
 ### Example 2: E-commerce Site Analysis
 
-**User**: "Check out shopify.com and tell me about automation possibilities"
+**User**: "Check out shopify.com and tell me about conversion optimization possibilities"
 
-**Voice Agent Response**: "I've analyzed Shopify's website and identified excellent automation opportunities. They're in the e-commerce platform industry. Here are 3 key automation opportunities: 1. Smart Inventory Management - AI-powered stock optimization and reorder automation with 30% reduction in stockouts, 2. Automated Customer Support - intelligent chatbots for common queries with 24/7 availability and 70% faster resolution times, 3. Dynamic Pricing Optimization - real-time price adjustments based on market conditions with 15-20% revenue increase potential. I found their business email and sent a comprehensive report. The lead has been captured for follow-up discussions."
+**Voice Agent Response**: "I've analyzed Shopify's website and identified excellent conversion optimization opportunities. They're in the e-commerce platform industry. Here are 3 key conversion optimization opportunities: 1. Smart Inventory Management - AI-powered stock optimization and reorder conversion optimization with 30% reduction in stockouts, 2. Automated Customer Support - intelligent chatbots for common queries with 24/7 availability and 70% faster resolution times, 3. Dynamic Pricing Optimization - real-time price adjustments based on market conditions with 15-20% revenue increase potential. I found their business email and sent a comprehensive report. The lead has been captured for follow-up discussions."
 
 ### Example 3: Error Handling
 
@@ -297,7 +297,7 @@ def format_for_voice(analysis_result: str) -> str:
     # Add pauses for better speech flow
     # Highlight key numbers and benefits
     
-    formatted = analysis_result.replace('AI automation', 'A I automation')
+    formatted = analysis_result.replace('AI conversion optimization', 'A I conversion optimization')
     formatted = formatted.replace('%', ' percent')
     formatted = formatted.replace('24/7', 'twenty four seven')
     
@@ -331,7 +331,7 @@ def test_voice_agent_integration():
     
     try:
         response = requests.post(
-            "https://web-voice-automation.up.railway.app",
+            "https://wedohype-voice-agent.up.railway.app",
             json={
                 "tool": "voice_agent_website_analysis",
                 "arguments": {"url": test_url}
@@ -377,4 +377,4 @@ if __name__ == "__main__":
 - Add appropriate pauses in long responses
 - Test with actual voice synthesis
 
-Your voice agent is now ready to provide powerful business automation analysis! 🎉
+Your voice agent is now ready to provide powerful business conversion optimization analysis! 🎉

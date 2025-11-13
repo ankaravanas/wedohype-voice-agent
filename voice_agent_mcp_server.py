@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Voice Agent MCP Server - Single tool for complete business automation analysis
+Voice Agent MCP Server - Single tool for complete landing page conversion analysis
 Combines all functionality into one powerful tool optimized for voice agents
 """
 
@@ -38,7 +38,7 @@ cors_middleware = Middleware(
 )
 
 # Initialize FastMCP server
-mcp = FastMCP("voice-agent-automation")
+mcp = FastMCP("wedohype-voice-agent")
 
 # Global variables for caching last analysis results
 _last_html_report = None
@@ -51,14 +51,13 @@ def voice_agent_website_analysis(url: str) -> str:
     """
     Complete business website analysis optimized for voice agents.
     
-    This single tool performs comprehensive business automation analysis:
+    This single tool performs comprehensive landing page conversion analysis:
     1. Analyzes website using FireCrawl v2 API
     2. Extracts business information and contact details  
-    3. Uses OpenAI GPT-4o to identify 3 automation opportunities
+    3. Uses OpenAI GPT-4o to identify 3 landing page conversion opportunities
     4. Generates professional HTML report
     5. Sends report via Gmail API (OAuth2)
-    6. Silently captures lead in ClickUp
-    7. Returns voice-friendly summary
+    6. Returns voice-friendly summary
     
     Perfect for voice agents - simple input (URL), simple output (speaking text).
     All complexity is handled internally with proper error handling.
@@ -92,7 +91,7 @@ def voice_agent_website_analysis(url: str) -> str:
         analysis_result = analyze_and_generate_html_report(crawl_result)
         
         if not analysis_result.get('success'):
-            return f"I analyzed the website for {company_name}, but couldn't generate detailed automation recommendations. The basic analysis shows they're in the {business_info.get('industry', 'business')} industry. You might want to try again or contact them directly."
+            return f"I analyzed the website for {company_name}, but couldn't generate detailed conversion recommendations. The basic analysis shows they're in the {business_info.get('industry', 'business')} industry. You might want to try again or contact them directly."
         
         # Step 4: Send lead data to webhook
         print(f"🔗 Sending lead data to webhook...", file=sys.stderr)
@@ -131,7 +130,7 @@ def voice_agent_website_analysis(url: str) -> str:
             summary_parts.append(f"They're in the {business_info.get('industry')} industry.")
         
         if len(opportunities) >= 3:
-            summary_parts.append("I identified 3 key automation opportunities: ")
+            summary_parts.append("I identified 3 key landing page conversion opportunities: ")
             for i, opp in enumerate(opportunities[:3], 1):
                 title = opp.get('title', f'Opportunity {i}')
                 impact = opp.get('impact', 'significant business benefits')
@@ -449,7 +448,7 @@ def extract_business_info(content: str, title: str) -> Dict[str, Any]:
 
 
 def analyze_and_generate_html_report(business_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Analyze business data and generate professional HTML report using OpenAI GPT-4o."""
+    """Analyze business data and generate professional HTML report with landing page conversion recommendations using OpenAI GPT-4o."""
     
     if not business_data.get('success'):
         return {
@@ -615,7 +614,7 @@ Return ONLY valid JSON in this exact format:
 
 
 def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any], url: str) -> str:
-    """Generate professional HTML report."""
+    """Generate professional HTML report with landing page conversion opportunities."""
     company_name = business_info.get('company_name', 'Business')
     opportunities = analysis.get('opportunities', [])
     
@@ -624,7 +623,7 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Automation Opportunities Report - {company_name}</title>
+    <title>Landing Page Conversion Report - {company_name}</title>
     <style>
         body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; }}
         .container {{ max-width: 1000px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }}
@@ -651,7 +650,7 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
 <body>
     <div class="container">
         <div class="header">
-            <h1>Website Opportunities Report</h1>
+            <h1>Landing Page Conversion Report</h1>
             <p>Comprehensive Analysis for {company_name}</p>
             <p>Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
         </div>
@@ -671,7 +670,7 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
                 <p>{analysis.get('overall_assessment', 'This business shows strong potential for CRO.')}</p>
             </div>
             
-            <h2>Website Conversion Opportunities</h2>"""
+            <h2>Landing Page Conversion Opportunities</h2>"""
     
     # Add each opportunity
     for i, opp in enumerate(opportunities, 1):
@@ -714,7 +713,7 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
     return html
 
 
-def send_html_email(html_report: str, recipient_email: str, subject: str = "AI Automation Opportunities Report") -> Dict[str, Any]:
+def send_html_email(html_report: str, recipient_email: str, subject: str = "Landing Page Conversion Report") -> Dict[str, Any]:
     """Send HTML email report via Gmail API using OAuth2."""
     
     if not html_report or not recipient_email:
