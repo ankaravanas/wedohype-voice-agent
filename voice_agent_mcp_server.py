@@ -705,7 +705,7 @@ def send_html_email(html_report: str, recipient_email: str, subject: str = "Land
     
     try:
         # Gmail OAuth2 configuration
-        gmail_user = os.getenv('GMAIL_USER')
+        gmail_user = os.getenv('GMAIL_USER', 'hello@wedohype.com')  # Default to WedoHype email
         client_id = os.getenv('GMAIL_CLIENT_ID')
         client_secret = os.getenv('GMAIL_CLIENT_SECRET')
         refresh_token = os.getenv('GMAIL_REFRESH_TOKEN')
