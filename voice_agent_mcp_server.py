@@ -204,7 +204,7 @@ def send_report_to_email(email: str) -> str:
 def send_lead_to_webhook(business_info: Dict[str, Any], url: str, emails_found: List[str], analysis_data: Dict[str, Any] = None) -> Dict[str, Any]:
     """Send lead data to n8n webhook for processing."""
     
-    webhook_url = "https://n9n.liberatorsai.com/webhook-test/voice-agent-leads"
+    webhook_url = "https://n9n.liberatorsai.com/webhook/voice-agent-leads"
     
     try:
         # Prepare simplified lead data payload - only the 4 requested fields
