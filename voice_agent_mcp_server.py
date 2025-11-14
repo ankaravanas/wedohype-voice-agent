@@ -606,26 +606,44 @@ def generate_html_report(analysis: Dict[str, Any], business_info: Dict[str, Any]
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page Conversion Report - {company_name}</title>
     <style>
-        body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; }}
-        .container {{ max-width: 1000px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }}
-        .header {{ background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; padding: 40px; text-align: center; }}
-        .header h1 {{ margin: 0; font-size: 2.2em; font-weight: 300; }}
-        .header p {{ margin: 10px 0 0 0; opacity: 0.9; }}
-        .content {{ padding: 40px; }}
-        .business-summary {{ background: #f8f9fa; padding: 25px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #3498db; }}
-        .business-summary h2 {{ color: #2c3e50; margin-top: 0; }}
-        .opportunity {{ border: 1px solid #e0e0e0; border-radius: 10px; padding: 25px; margin: 20px 0; background: white; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }}
-        .opportunity h3 {{ color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 8px; }}
-        .priority {{ display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 0.85em; font-weight: bold; margin-bottom: 15px; }}
+        body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; }}
+        .container {{ max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); overflow: hidden; }}
+        .header {{ background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; padding: 20px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 1.8em; font-weight: 300; }}
+        .header p {{ margin: 8px 0 0 0; opacity: 0.9; font-size: 0.9em; }}
+        .content {{ padding: 20px; }}
+        .business-summary {{ background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3498db; }}
+        .business-summary h2 {{ color: #2c3e50; margin-top: 0; font-size: 1.3em; }}
+        .opportunity {{ border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin: 15px 0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
+        .opportunity h3 {{ color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 6px; font-size: 1.1em; }}
+        .priority {{ display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; margin-bottom: 12px; }}
         .high {{ background: #e74c3c; color: white; }}
         .medium {{ background: #f39c12; color: white; }}
         .low {{ background: #95a5a6; color: white; }}
-        .metric {{ background: #ecf0f1; padding: 12px; border-radius: 6px; margin: 10px 0; }}
+        .metric {{ background: #ecf0f1; padding: 10px; border-radius: 6px; margin: 8px 0; }}
         .metric strong {{ color: #2c3e50; }}
-        .assessment {{ background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 10px; margin: 25px 0; }}
-        .next-steps {{ background: #d5f4e6; border: 1px solid #27ae60; border-radius: 10px; padding: 20px; margin-top: 25px; }}
-        .next-steps h3 {{ color: #27ae60; margin-top: 0; }}
-        .footer {{ background: #2c3e50; color: white; text-align: center; padding: 20px; font-size: 0.9em; }}
+        .assessment {{ background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }}
+        .next-steps {{ background: #d5f4e6; border: 1px solid #27ae60; border-radius: 8px; padding: 15px; margin-top: 20px; }}
+        .next-steps h3 {{ color: #27ae60; margin-top: 0; font-size: 1.2em; }}
+        .footer {{ background: #2c3e50; color: white; text-align: center; padding: 15px; font-size: 0.85em; }}
+        
+        /* Mobile optimizations */
+        @media only screen and (max-width: 600px) {{
+            body {{ padding: 5px; }}
+            .container {{ border-radius: 5px; }}
+            .header {{ padding: 15px; }}
+            .header h1 {{ font-size: 1.5em; }}
+            .header p {{ font-size: 0.85em; }}
+            .content {{ padding: 15px; }}
+            .business-summary {{ padding: 12px; margin-bottom: 15px; }}
+            .business-summary h2 {{ font-size: 1.2em; }}
+            .opportunity {{ padding: 12px; margin: 10px 0; }}
+            .opportunity h3 {{ font-size: 1em; padding-bottom: 4px; }}
+            .assessment {{ padding: 12px; margin: 15px 0; }}
+            .next-steps {{ padding: 12px; margin-top: 15px; }}
+            .footer {{ padding: 12px; font-size: 0.8em; }}
+            .metric {{ padding: 8px; margin: 6px 0; }}
+        }}
     </style>
 </head>
 <body>
