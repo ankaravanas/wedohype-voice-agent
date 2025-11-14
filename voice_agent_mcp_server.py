@@ -428,6 +428,68 @@ def extract_business_info_basic(content: str, title: str) -> Dict[str, Any]:
     }
 
 
+def detect_content_language(content: str) -> str:
+    """Detect the primary language of website content using AI."""
+    
+    # Sample text for language detection (first 1000 characters)
+    sample_text = content[:1000].strip()
+    
+    if not sample_text:
+        return "English"
+    
+    try:
+        openai_api_key = os.getenv('OPENAI_API_KEY')
+        if not openai_api_key:
+            return "English"  # Fallback to English
+        
+        # Use OpenAI to detect language
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {openai_api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-4o-mini',  # Cost-efficient for language detection
+                'messages': [
+                    {
+                        'role': 'system',
+                        'content': 'You are a language detection expert. Identify the primary language of the given text. Respond with just the language name in English (e.g., "Greek", "Spanish", "French", "German", "Italian", "Portuguese", "English", etc.).'
+                    },
+                    {
+                        'role': 'user',
+                        'content': f'What is the primary language of this text?\n\n{sample_text}'
+                    }
+                ],
+                'temperature': 0.1,
+                'max_tokens': 10
+            },
+            timeout=15
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            detected_lang = result.get('choices', [{}])[0].get('message', {}).get('content', '').strip()
+            
+            # Validate and clean the response
+            common_languages = ['English', 'Greek', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Dutch', 'Russian', 'Chinese', 'Japanese']
+            for lang in common_languages:
+                if lang.lower() in detected_lang.lower():
+                    print(f"🌐 Detected language: {lang}", file=sys.stderr)
+                    return lang
+            
+            # If no match found, default to English
+            print(f"🌐 Language detection unclear, defaulting to English", file=sys.stderr)
+            return "English"
+        else:
+            print(f"🌐 Language detection failed, defaulting to English", file=sys.stderr)
+            return "English"
+            
+    except Exception as e:
+        print(f"🌐 Language detection error, defaulting to English: {e}", file=sys.stderr)
+        return "English"
+
+
 def analyze_and_generate_html_report(business_data: Dict[str, Any]) -> Dict[str, Any]:
     """Analyze business data and generate professional HTML report with landing page conversion recommendations using OpenAI GPT-4o."""
     
@@ -444,10 +506,15 @@ def analyze_and_generate_html_report(business_data: Dict[str, Any]) -> Dict[str,
         business_info = data.get('business_info', {})
         company_name = business_info.get('company_name', 'Business')
         
-        # Prepare analysis prompt for OpenAI
+        # Detect language from website content
+        detected_language = detect_content_language(content)
+        
+        # Prepare analysis prompt for OpenAI with automatic language detection
         analysis_prompt = f"""
         You are a landing page conversion consultant. Review the BUSINESS INFORMATION and the WEBSITE CONTENT ANALYSIS. Identify exactly 3 specific landing page conversion opportunities that are practical to implement within 7 days, aligned with the business model and audience, focused on messaging and structure (headline clarity, value proposition, CTAs, form friction, social proof, objection handling, trust), and aimed at measurable outcomes within 6–12 months (e.g., higher conversion rate, more qualified inquiries).
-All JSON values must be written in Greek (field names remain exactly as in the schema). Avoid discussing page speed, mobile optimization, SEO, tracking, tools, integrations, pricing, costs, or fees.
+
+IMPORTANT LANGUAGE INSTRUCTION: 
+The website content appears to be primarily in {detected_language}. Please provide ALL your analysis (title, description, impact, implementation, overall_assessment, recommended_next_steps) in {detected_language}. Field names should remain in English as shown in the JSON schema, but all values should be in {detected_language}.
 
 BUSINESS INFORMATION:
 
@@ -468,27 +535,27 @@ Deliver 3 landing page conversion opportunities strictly about copy and layout (
 
 For each opportunity: state what to change on the page and why it matters in plain business terms.
 
-“implementation”: list 3–5 simple steps (copy/layout only; no technical setup or tools).
+"implementation": list 3–5 simple steps (copy/layout only; no technical setup or tools).
 
-“impact”: describe concrete business benefits (e.g., fewer form drop-offs, more qualified inquiries, likely CR lift).
+"impact": describe concrete business benefits (e.g., fewer form drop-offs, more qualified inquiries, likely CR lift).
 
-Sort the three opportunities by “priority” (High, then Medium, then Low).
+Sort the three opportunities by "priority" (High, then Medium, then Low).
 
-If information is missing, note reasonable assumptions in “overall_assessment”.
+If information is missing, note reasonable assumptions in "overall_assessment".
 
 Return ONLY valid JSON in this exact format:
 {{
 "opportunities": [
 {{
 "title": "Specific landing page change",
-"description": "What exactly changes on the page and why it matters (Greek).",
-"impact": "Concrete business benefits in Greek (e.g., fewer drop-offs, more qualified inquiries).",
-"implementation": "3–5 simple Greek steps for copy/layout adjustments (no tools, no tech).",
+"description": "What exactly changes on the page and why it matters (in {detected_language}).",
+"impact": "Concrete business benefits in {detected_language} (e.g., fewer drop-offs, more qualified inquiries).",
+"implementation": "3–5 simple steps in {detected_language} for copy/layout adjustments (no tools, no tech).",
 "priority": "High/Medium/Low"
 }}
 ],
-"overall_assessment": "Short Greek assessment of landing page readiness, gaps, and assumptions.",
-"recommended_next_steps": "Specific Greek next steps to execute the changes."
+"overall_assessment": "Short assessment in {detected_language} of landing page readiness, gaps, and assumptions.",
+"recommended_next_steps": "Specific next steps in {detected_language} to execute the changes."
 }}
 """
         
